@@ -44,6 +44,7 @@ process merge_vcf {
     publishDir "${params.results}/merged", mode: 'symlink'
     clusterOptions='--partition=topmed-working --exclude=topmed,topmed[2-10]'
     container 'library://porchard/default/general:20220107'
+    memory '20 GB'
 
     input:
     path(vcfs)
@@ -53,7 +54,7 @@ process merge_vcf {
     path("merged.sorted.vcf.gz")
 
     """
-    bcftools concat --allow-overlaps ${vcfs.join(' ')} -Ou | bcftools sort -T . -o merged.sorted.vcf.gz -Oz
+    bcftools concat --allow-overlaps ${vcfs.join(' ')} -Ou | bcftools sort --max-mem 10G -T . -o merged.sorted.vcf.gz -Oz
     """
 
 }
